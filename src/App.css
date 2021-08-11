@@ -17,19 +17,22 @@
 .Table td,th {
   border-bottom: 1px solid #d6d1d1;
   text-align: left;
-  padding: 10px;
+  padding: 5px;
 }
 .Table{
-  height: 250px;
+  min-height: 150px;
+  padding: 5px;
   width: 100%;
-  margin: 0px auto;
   
 }
 table { border-spacing:0 }
 
 .Table th{ 
     border-top: 1px solid #d6d1d1;
-    padding: 5px;
 
   }
+ .Table td {
+   font-size: 16px;
+   max-width: 100px;
+ }
 

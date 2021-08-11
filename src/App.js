@@ -57,6 +57,7 @@ class App extends Component {
           newAlerts.date = al.Alert_Date;
           newAlerts.aTitle = al.Alert_Title;
           newAlerts.expiry = al.Expiry_Date;
+          newAlerts.template = al.Alert_Template;
       }
       });
       
@@ -91,11 +92,11 @@ closeHandler = () => {
                 <h2> Company Alerts Detail </h2>
                 <table className="Table">
                   <thead>
-                  <tr><th>Company Name</th><th>Alert Title</th><th>Alert Date</th><th>Expiry Date</th></tr>
+                  <tr><th>Company Name</th><th>Alert Title</th><th>Alert Template</th><th>Alert Date</th><th>Expiry Date</th></tr>
                   </thead>
                   <tbody>
                   { Object.entries(data).length !== 0 ?
-                      <tr><td>{data.name}</td><td>{data.aTitle}</td><td>{data.date}</td><td>{data.expiry}</td></tr>:
+                      <tr><td>{data.name}</td><td>{data.aTitle}</td><td>{data.template}</td><td>{data.date}</td><td>{data.expiry}</td></tr>:
                       <h3 style={{margin: '10px', padding: '10px', textAlign: 'center'}}>No Record Found</h3>
                       }
                   </tbody> 
