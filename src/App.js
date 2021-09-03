@@ -1,8 +1,9 @@
 import React,{Component} from 'react';
 import Axios from 'axios';
-import TextField from '@material-ui/core/TextField';
-import Autocomplete from '@material-ui/lab/Autocomplete';
-import Button from '@material-ui/core/Button';
+import { withRouter } from 'react-router';
+// import TextField from '@material-ui/core/TextField';
+// import Autocomplete from '@material-ui/lab/Autocomplete';
+// import Button from '@material-ui/core/Button';
 import Modal from './components/modal/Modal';
 import './App.css';
 
@@ -18,71 +19,97 @@ class App extends Component {
     alertData: {}
   }
   componentDidMount () {
-    this.getNames();
+    
     this.getAlerts();
+    this.getNames();
+    
     
   }
 
  getNames = () => {
-   
+  const queryString = this.props.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  const companyName = urlParams.get('name');
+  console.log(companyName);
+   this.setState({selectedName: companyName});
     Axios.get('https://creator-api.herokuapp.com/names').then(res => {
       this.setState({names: res.data},() => console.log('names',this.state.names));
-    
-
-
     }).catch(err => console.log(err));
 
   }
  getAlerts = () => {
    
     Axios.get('https://creator-api.herokuapp.com/alerts').then(res => {
-      this.setState({alerts: res.data.data},() => console.log('alerts',this.state.alerts));
+      this.setState({alerts: res.data.data},() => this.companyDataHandler());
 
     }).catch(err => console.log(err));
-
+    
   }
-  
-    selectNameHandler = (e, value) => {
-    console.log('value', value);
-    if(value){
-   
-    this.setState({selectedName: value.title, selectedNameID: value.id, disable : false}, () => {
-      let alerts = this.state.alerts;
-      let id = this.state.selectedNameID;
-      let newAlerts = {};
-      
-      alerts.forEach(al => {
-        if(al.Company_Info_ID.ID === id){
+  companyDataHandler = () => {
+    const name = this.state.selectedName;
+    const alerts = this.state.alerts;
+    let newAlerts = {};
+    console.log(alerts);
+    if(this.state.alerts.length !== 0 ){
+    alerts.forEach(al => {
+      if(al.Company_Info_ID.display_value === name){
+        console.log('al',al);
           newAlerts.name = al.Company_Info_ID.display_value;
           newAlerts.date = al.Alert_Date;
           newAlerts.aTitle = al.Alert_Title;
           newAlerts.expiry = al.Expiry_Date;
-          newAlerts.template = al.Alert_Template;
+          newAlerts.template = al.Alert_Template; 
+
       }
-      });
-      
-      this.setState({alertData: newAlerts}, () => console.log('alerts data', this.state.alertData));
-
-      console.log(this.state.selectedName);
-
     });
+  
+    this.setState({alertData: newAlerts}, () => console.log('alerts data', this.state.alertData));
   }
-  if(value === null){
-    this.setState({disable: true});
+    if(name !== null){
+    this.setState({openModal: true});
+    }
   }
-}
-alertHandler = () => {
-  this.setState({openModal: true});
+    // selectNameHandler = (e, value) => {
+    // console.log('value', value);
+    // if(value){
+   
+    // this.setState({selectedName: value.title, selectedNameID: value.id, disable : false}, () => {
+    //   let alerts = this.state.alerts;
+    //   let id = this.state.selectedNameID;
+    //   let newAlerts = {};
+      
+    //   alerts.forEach(al => {
+    //     if(al.Company_Info_ID.ID === id){
+    //       newAlerts.name = al.Company_Info_ID.display_value;
+    //       newAlerts.date = al.Alert_Date;
+    //       newAlerts.aTitle = al.Alert_Title;
+    //       newAlerts.expiry = al.Expiry_Date;
+    //       newAlerts.template = al.Alert_Template;
+    //   }
+    //   });
+      
+    //   this.setState({alertData: newAlerts}, () => console.log('alerts data', this.state.alertData));
 
-}
-closeHandler = () => {
-  this.setState({openModal: false});
-}
+    //   console.log(this.state.selectedName);
+
+    // });
+//   // }
+//   if(value === null){
+//     this.setState({disable: true});
+//   }
+// }
+// alertHandler = () => {
+//   this.setState({openModal: true});
+
+// }
+// closeHandler = () => {
+//   this.setState({openModal: false});
+// }
   
    
   render(){
 
-    if(this.state.openModal){
+    if((this.state.openModal === true) && (this.state.selectedName !== '' || this.state.selectedName === null)){
       let data = this.state.alertData;
       return (<Modal 
                 show={this.state.openModal} 
@@ -90,17 +117,19 @@ closeHandler = () => {
                     >
                  <div className="Modal">   
                 <h2> Company Alerts Detail </h2>
-                <table className="Table">
+                <h3>Alert Title</h3>
+                {data.aTitle !== ''? <p>{data.aTitle}</p>: <p>No record Found</p>}
+                {/* <table className="Table">
                   <thead>
                   <tr><th>Company Name</th><th>Alert Title</th><th>Alert Template</th><th>Alert Date</th><th>Expiry Date</th></tr>
                   </thead>
                   <tbody>
                   { Object.entries(data).length !== 0 ?
                       <tr><td>{data.name}</td><td>{data.aTitle}</td><td>{data.template}</td><td>{data.date}</td><td>{data.expiry}</td></tr>:
-                      <h3 style={{margin: '10px', padding: '10px', textAlign: 'center'}}>No Record Found</h3>
+                      <h3 style={{margin: '10px', padding: '10px' }}>No Record Found</h3>
                       }
                   </tbody> 
-                </table>
+                </table> */}
                 </div>
               </Modal>);
 
@@ -109,7 +138,8 @@ closeHandler = () => {
 
   return (
     <div className="App">
-     <h2>Select A Company Name to Get Alerts</h2>
+      {/* {data} */}
+     {/* <h2>Select A Company Name to Get Alerts</h2>
      <div className="Input">
       <Autocomplete
         id="controlled-demo"
@@ -130,11 +160,12 @@ closeHandler = () => {
       >
         Show Alerts
       </Button>
-      </div>
+      </div> */}
       
     </div>
   );
   }
 }
 
-export default App;
+export default withRouter(App);
+
